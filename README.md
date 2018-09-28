@@ -17,7 +17,7 @@ npm install --save react-async-action
 ### data-request example
 
 ```js
-import { Async } from 'react-async-action';
+import Async from 'react-async-action';
 
 export default () => (
     <Async action={() => fetch('api/product/list')}>
@@ -35,7 +35,7 @@ export default () => (
 ### request-on-demand example
 
 ```js
-import { Async } from 'react-async-action';
+import Async from 'react-async-action';
 
 export default () => (
     <Async action={() => fetch('api/product/1/save')} onDemand>
@@ -47,6 +47,27 @@ export default () => (
         )}
     </Async>
 );
+```
+
+### create-instance example (Async factory)
+
+```js
+import { createInstance } from 'react-async-action';
+
+const ProductList = createInstance({
+    action: () => fetch('api/product/list'),
+});
+
+export default () => (
+    <ProductList>
+        {({ response }) => (
+            <React.Fragment>
+                {response && <pre>{JSON.stringify(response, null, '\t')}</pre>}
+            </React.Fragment>
+        )}
+    </ProductList>
+);
+
 ```
 
 ## API - `<Async>`
