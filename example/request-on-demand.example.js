@@ -1,4 +1,5 @@
-import { Async } from 'react-async-action';
+import React from 'react';
+import Async from 'react-async-action';
 
 export default () => (
     <Async action={() => fetch('api/product/1/save')} onDemand>
