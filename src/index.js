@@ -5,11 +5,13 @@ export class Async extends Component {
     state = {
         response: null,
         error: null,
-        isLoading: true,
+        isLoading: false,
     };
 
     componentDidMount() {
-        this._handleAction();
+        if (!this.props.onDemand) {
+            this._handleAction();
+        }
     }
 
     render() {
@@ -17,11 +19,16 @@ export class Async extends Component {
             response: this.state.response,
             error: this.state.error,
             isLoading: this.state.isLoading,
+            run: () => this._handleAction(),
         });
     }
 
     _handleAction() {
         const action = Promise.resolve(this.props.action());
+
+        this.setState({
+            isLoading: true,
+        });
 
         action
             .then(response => this.setState({
@@ -35,7 +42,8 @@ export class Async extends Component {
     }
 
     static propTypes = {
+        children: PropTypes.func.isRequired,
         action: PropTypes.func.isRequired,
-        children: PropTypes.func,
+        onDemand: PropTypes.bool,
     };
 }
