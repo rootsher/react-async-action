@@ -1,6 +1,6 @@
 {
   "name": "react-async-action",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "React async action handler",
   "main": "src/index.js",
   "scripts": {

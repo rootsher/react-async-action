@@ -2,10 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 export class Async extends Component {
+    static propTypes = {
+        children: PropTypes.func.isRequired,
+        action: PropTypes.func.isRequired,
+        onDemand: PropTypes.bool,
+    };
+
     state = {
+        isLoading: false,
         response: null,
         error: null,
-        isLoading: false,
     };
 
     componentDidMount() {
@@ -16,10 +22,12 @@ export class Async extends Component {
 
     render() {
         return this.props.children({
+            isPending: this._isPending(),
+            isLoading: this.state.isLoading,
             response: this.state.response,
             error: this.state.error,
-            isLoading: this.state.isLoading,
-            run: () => this._handleAction(),
+            run: () => this.props.onDemand && this._handleAction(),
+            reload: () => this._handleAction(),
         });
     }
 
@@ -41,9 +49,15 @@ export class Async extends Component {
             }));
     }
 
-    static propTypes = {
-        children: PropTypes.func.isRequired,
-        action: PropTypes.func.isRequired,
-        onDemand: PropTypes.bool,
-    };
+    /**
+     * Returns true if the request has not yet been fired.
+     *
+     * @returns {boolean}
+     * @private
+     */
+    _isPending() {
+        const { isLoading, response, error } = this.state;
+
+        return (!isLoading && !response && !error);
+    }
 }
