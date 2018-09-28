@@ -31,3 +31,13 @@ export default () => (
     </Async>
 );
 ```
+
+## `<Async>` component - available properties (props):
+
+* `action` - a function that should return an asynchronous value
+
+## `<Async>` render component - available properties (props):
+
+* `isLoading` - contains state of the asynchronous action (boolean)
+* `response` - contains the response of the asynchronous action
+* `error` - contains an error that occurred in an asynchronous action
