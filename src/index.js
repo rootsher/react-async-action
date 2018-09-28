@@ -38,19 +38,19 @@ export const createInstance = (defaultProps = {}) => {
         }
 
         _handleAction() {
-            const action = Promise.resolve(this.props.action());
+            const { action, ...rest } = this.props;
 
             this.setState({
                 isLoading: true,
             });
 
-            action
+            Promise.resolve(action(rest))
                 .then(response => this.setState({
-                    response,
+                    response: (response || null),
                     isLoading: false,
                 }))
                 .catch(error => this.setState({
-                    error,
+                    error: (error || null),
                     isLoading: false,
                 }));
         }
