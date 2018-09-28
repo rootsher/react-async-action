@@ -22,11 +22,28 @@ import { Async } from 'react-async-action';
 export default () => (
     <Async action={() => fetch('api/product/list')}>
         {({ isLoading, response, error }) => (
-            <div>
+            <React.Fragment>
                 {isLoading && <div>Loading...</div>}
                 {response && <pre>{JSON.stringify(response, null, '\t')}</pre>}
-                {error && <div style={{ color: 'red' }}>{JSON.stringify(error, null, '\t')}</div>}
-            </div>
+                {error && <pre style={{ color: 'red' }}>{JSON.stringify(error, null, '\t')}</pre>}
+            </React.Fragment>
+        )}
+    </Async>
+);
+```
+
+### request-on-demand example
+
+```js
+import { Async } from 'react-async-action';
+
+export default () => (
+    <Async action={() => fetch('api/product/1/save')} onDemand>
+        {({ run, response }) => (
+            <React.Fragment>
+                <button onClick={run}>save</button>
+                {response && <pre>{JSON.stringify(response, null, '\t')}</pre>}
+            </React.Fragment>
         )}
     </Async>
 );
@@ -35,9 +52,11 @@ export default () => (
 ## `<Async>` component - available properties (props):
 
 * `action` - a function that should return an asynchronous value
+* `onDemand` (boolean) - a flag which allows to run the action on demand
 
 ## `<Async>` render component - available properties (props):
 
 * `isLoading` - contains state of the asynchronous action (boolean)
 * `response` - contains the response of the asynchronous action
 * `error` - contains an error that occurred in an asynchronous action
+* `run` - function which allows firing action on demand (onDemand flag is required)
