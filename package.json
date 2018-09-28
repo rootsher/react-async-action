@@ -1,0 +1,24 @@
+{
+  "name": "react-async-action",
+  "version": "0.1.0",
+  "description": "React async action handler",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rootsher/react-async-action.git"
+  },
+  "keywords": [
+    "react",
+    "async",
+    "action"
+  ],
+  "author": "Konrad Kowalski <rootsher@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rootsher/react-async-action/issues"
+  },
+  "homepage": "https://github.com/rootsher/react-async-action#readme"
+}
