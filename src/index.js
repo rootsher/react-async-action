@@ -2,9 +2,27 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 export const createInstance = (defaultProps = {}) => {
+    const { Consumer, Provider } = React.createContext();
+
+    function renderChildren(children, data) {
+        return (typeof children === 'function') ? children(data) : children;
+    }
+
+    function consumerFactory(condition) {
+        return ({ children }) => (
+            <Consumer>
+                {state => condition(state) && renderChildren(children, condition(state))}
+            </Consumer>
+        );
+    }
+
     class Async extends Component {
         static propTypes = {
-            children: PropTypes.func.isRequired,
+            children: PropTypes.oneOfType([
+                PropTypes.arrayOf(PropTypes.node),
+                PropTypes.node,
+                PropTypes.func
+            ]).isRequired,
             action: PropTypes.func.isRequired,
             onDemand: PropTypes.bool,
         };
@@ -20,6 +38,22 @@ export const createInstance = (defaultProps = {}) => {
             error: null,
         };
 
+        static Pending = consumerFactory(state => (
+            !state.error && !state.response && !state.isLoading
+        ));
+
+        static Loading = consumerFactory(state => (
+            !state.error && !state.response && state.isLoading
+        ));
+
+        static Resolved = consumerFactory(state => (
+            !state.isLoading && !state.error && state.response
+        ));
+
+        static Rejected = consumerFactory(state => (
+            !state.isLoading && !state.response && state.error
+        ));
+
         componentDidMount() {
             if (!this.props.onDemand) {
                 this._handleAction();
@@ -27,14 +61,18 @@ export const createInstance = (defaultProps = {}) => {
         }
 
         render() {
-            return this.props.children({
-                isPending: this._isPending(),
-                isLoading: this.state.isLoading,
-                response: this.state.response,
-                error: this.state.error,
-                run: () => this.props.onDemand && this._handleAction(),
-                reload: () => this._handleAction(),
-            });
+            const { children, onDemand } = this.props;
+
+            return (
+                <Provider value={this.state}>
+                    {renderChildren(children, {
+                        ...this.state,
+                        isPending: this._isPending(),
+                        run: () => onDemand && this._handleAction(),
+                        reload: () => this._handleAction(),
+                    })}
+                </Provider>
+            );
         }
 
         _handleAction() {
@@ -42,6 +80,8 @@ export const createInstance = (defaultProps = {}) => {
 
             this.setState({
                 isLoading: true,
+                response: null,
+                error: null,
             });
 
             Promise.resolve(action(rest))
@@ -55,12 +95,6 @@ export const createInstance = (defaultProps = {}) => {
                 }));
         }
 
-        /**
-         * Returns true if the request has not yet been fired.
-         *
-         * @returns {boolean}
-         * @private
-         */
         _isPending() {
             const { isLoading, response, error } = this.state;
 

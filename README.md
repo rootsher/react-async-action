@@ -70,6 +70,31 @@ export default () => (
 
 ```
 
+### dependent-requests example
+
+```js
+import Async from 'react-async-action';
+
+const fetchProductToken = () => fetch('api/product/token');
+const fetchProductDetails = ({ token }) => fetch('api/product/1/details', { token });
+
+export default () => (
+    <Async action={fetchProductToken}>
+        <Async.Resolved>
+            {token => (
+                <Async action={fetchProductDetails} token={token}>
+                    <Async.Resolved>
+                        {response => (
+                            <pre>{JSON.stringify(response, null, '\t')}</pre>
+                        )}
+                    </Async.Resolved>
+                </Async>
+            )}
+        </Async.Resolved>
+    </Async>
+);
+```
+
 ## API - `<Async>`
 
 ### component - available properties (props):
@@ -85,3 +110,15 @@ export default () => (
 * `error` - contains an error that occurred in an asynchronous action
 * `run` - function which allows firing action on demand (onDemand flag is required)
 * `reload` - a function that allows calling the action again
+
+## `<Async.X> components`
+
+Sub-components are rendering only when the status occured.
+These components can be inserted at any level of the structure,
+because for communication with the main Async component is used react context api.
+Unlike child-functional functions, they allow the capture of responses from Async-parents.
+
+* `<Async.Pending>` - renders itself only when pending status occurs
+* `<Async.Loading>` - renders itself only when the loading status occurs
+* `<Async.Resolved>` - render only when resolved status occurs
+* `<Async.Rejected>` - renders itself only if the status is rejected
