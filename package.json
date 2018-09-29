@@ -1,6 +1,6 @@
 {
   "name": "react-async-action",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "React async action handler",
   "main": "src/index.js",
   "repository": {
@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/rootsher/react-async-action/issues"
   },
-  "homepage": "https://github.com/rootsher/react-async-action#readme"
+  "homepage": "https://github.com/rootsher/react-async-action#readme",
+  "dependencies": {
+    "prop-types": "^15.6.2",
+    "react": "^16.5.2"
+  }
 }
