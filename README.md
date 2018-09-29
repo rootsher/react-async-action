@@ -16,6 +16,8 @@ npm install --save react-async-action
 
 ### data-request example
 
+* using simple callback children:
+
 ```js
 import Async from 'react-async-action';
 
@@ -30,6 +32,27 @@ export default () => (
         )}
     </Async>
 );
+```
+
+* identical example, using only `<Async.X>`:
+
+```js
+import Async from 'react-async-action';
+
+export default () => (
+    <Async action={() => fetch('api/product/list')}>
+        <Async.Loading>
+            <div>Loading...</div>
+        </Async.Loading>
+        <Async.Resolved>
+            {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
+        </Async.Resolved>
+        <Async.Rejected>
+            {error => <pre>{JSON.stringify(error, null, '\t')}</pre>}
+        </Async.Rejected>
+    </Async>
+);
+
 ```
 
 ### request-on-demand example
