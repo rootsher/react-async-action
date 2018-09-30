@@ -32,12 +32,6 @@ export const createInstance = (defaultProps = {}) => {
             ...defaultProps,
         };
 
-        state = {
-            isLoading: false,
-            response: null,
-            error: null,
-        };
-
         static Pending = consumerFactory(state => (
             !state.error && !state.response && !state.isLoading
         ));
@@ -53,6 +47,12 @@ export const createInstance = (defaultProps = {}) => {
         static Rejected = consumerFactory(state => (
             !state.isLoading && !state.response && state.error
         ));
+
+        state = {
+            isLoading: false,
+            response: null,
+            error: null,
+        };
 
         componentDidMount() {
             if (!this.props.onDemand) {
