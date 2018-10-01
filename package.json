@@ -1,7 +1,7 @@
 {
   "name": "react-async-action",
-  "version": "0.3.1",
-  "description": "React async action handler",
+  "version": "0.3.2",
+  "description": "Solution for better handling of asynchronous calls in react components",
   "main": "src/index.js",
   "repository": {
     "type": "git",
