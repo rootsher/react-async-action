@@ -4,8 +4,12 @@ import PropTypes from 'prop-types';
 export const createInstance = (defaultProps = {}) => {
     const { Consumer, Provider } = React.createContext();
 
+    function isFunction(children) {
+        return (typeof children === 'function');
+    }
+
     function renderChildren(children, data) {
-        return (typeof children === 'function') ? children(data) : children;
+        return isFunction(children) ? children(data) : children;
     }
 
     function consumerFactory(condition) {
@@ -55,6 +59,10 @@ export const createInstance = (defaultProps = {}) => {
         };
 
         componentDidMount() {
+            if (!isFunction(this.props.action)) {
+                throw new Error('"action" props must be a function');
+            }
+
             if (!this.props.onDemand) {
                 this._handleAction();
             }

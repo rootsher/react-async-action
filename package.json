@@ -1,6 +1,6 @@
 {
   "name": "react-async-action",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Solution for better handling of asynchronous calls in react components",
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -31,7 +31,6 @@
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
-    "babel-preset-minify": "^0.5.0"
+    "@babel/preset-react": "^7.0.0"
   }
 }
