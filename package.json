@@ -1,8 +1,12 @@
 {
   "name": "react-async-action",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Solution for better handling of asynchronous calls in react components",
-  "main": "src/index.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build"
+  },
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rootsher/react-async-action.git"
@@ -21,5 +25,13 @@
   "dependencies": {
     "prop-types": "^15.6.2",
     "react": "^16.5.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-preset-minify": "^0.5.0"
   }
 }
