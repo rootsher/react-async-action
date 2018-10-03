@@ -3,9 +3,9 @@ import Async from 'react-async-action';
 
 export default () => (
     <Async
-		action={() => fetch('api/product/list')}
-		onResolve={response => console.log('do something...')}
-	>
+        action={() => fetch('api/product/list')}
+        onResolve={response => console.log('do something...')}
+    >
         <Async.Resolved>
             {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
         </Async.Resolved>

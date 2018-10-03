@@ -28,16 +28,18 @@ export const createInstance = (defaultProps = {}) => {
                 PropTypes.func
             ]).isRequired,
             action: PropTypes.func.isRequired,
-			transformer: PropTypes.func,
-			onResolve: PropTypes.func,
-			onReject: PropTypes.func,
+            transformer: PropTypes.func,
+            onResolve: PropTypes.func,
+            onReject: PropTypes.func,
             onDemand: PropTypes.bool,
         };
 
         static defaultProps = {
-			transformer: response => response,
-			onResolve: response => {},
-			onReject: error => {},
+            transformer: response => response,
+            onResolve: response => {
+            },
+            onReject: error => {
+            },
             onDemand: false,
             ...defaultProps,
         };
@@ -100,21 +102,21 @@ export const createInstance = (defaultProps = {}) => {
 
             Promise.resolve(action(rest))
                 .then(response => {
-					onResolve(response);
+                    onResolve(response);
 
-					this.setState({
-						response: transformer(response || null),
-						isLoading: false,
-					});
-				})
+                    this.setState({
+                        response: transformer(response || null),
+                        isLoading: false,
+                    });
+                })
                 .catch(error => {
-                	onReject(error);
+                    onReject(error);
 
-					this.setState({
-						error: (error || null),
-						isLoading: false,
-					});
-				});
+                    this.setState({
+                        error: (error || null),
+                        isLoading: false,
+                    });
+                });
         }
 
         _isPending() {
