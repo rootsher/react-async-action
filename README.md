@@ -146,6 +146,7 @@ export default () => (
 * `transformer` - a function that transform response
 * `onResolve` - a function that fires when the promise is fulfilled
 * `onReject` - a function that fires when the promise is rejected
+* `delay` (ms) - delay in the execution of action
 * `onDemand` (boolean) - a flag which allows to run the action on demand
 
 ### render component - available properties (props):
