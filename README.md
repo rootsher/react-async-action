@@ -118,11 +118,34 @@ export default () => (
 );
 ```
 
+### response-transformer example
+
+```js
+import Async from 'react-async-action';
+
+export default () => (
+    <Async
+		action={() => fetch('api/product/list')}
+		transformer={response => ({
+			...response,
+			someKey: 'someValue'
+		})}
+	>
+		<Async.Resolved>
+			{response => <div>{response.someKey}</div>}
+		</Async.Resolved>
+    </Async>
+);
+```
+
 ## API - `<Async>`
 
 ### component - available properties (props):
 
 * `action` - a function that should return an asynchronous value
+* `transformer` - a function that transform response
+* `onResolve` - a function that fires when the promise is fulfilled
+* `onReject` - a function that fires when the promise is rejected
 * `onDemand` (boolean) - a flag which allows to run the action on demand
 
 ### render component - available properties (props):
