@@ -4,6 +4,10 @@ import PropTypes from 'prop-types';
 export const createInstance = (defaultProps = {}) => {
     const { Consumer, Provider } = React.createContext();
 
+    function timeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     function isFunction(children) {
         return (typeof children === 'function');
     }
@@ -31,15 +35,14 @@ export const createInstance = (defaultProps = {}) => {
             transformer: PropTypes.func,
             onResolve: PropTypes.func,
             onReject: PropTypes.func,
+            delay: PropTypes.number,
             onDemand: PropTypes.bool,
         };
 
         static defaultProps = {
             transformer: response => response,
-            onResolve: response => {
-            },
-            onReject: error => {
-            },
+            onResolve: response => {},
+            onReject: error => {},
             onDemand: false,
             ...defaultProps,
         };
@@ -92,7 +95,8 @@ export const createInstance = (defaultProps = {}) => {
         }
 
         _handleAction() {
-            const { action, transformer, onResolve, onReject, ...rest } = this.props;
+            const { action, transformer, onResolve, onReject, delay, ...rest } = this.props;
+            let request = Promise.resolve(action(rest));
 
             this.setState({
                 isLoading: true,
@@ -100,23 +104,25 @@ export const createInstance = (defaultProps = {}) => {
                 error: null,
             });
 
-            Promise.resolve(action(rest))
-                .then(response => {
-                    onResolve(response);
+            if (delay) {
+                request = timeout(delay).then(request);
+            }
 
-                    this.setState({
-                        response: transformer(response || null),
-                        isLoading: false,
-                    });
-                })
-                .catch(error => {
-                    onReject(error);
+            request.then(response => {
+                onResolve(response);
 
-                    this.setState({
-                        error: (error || null),
-                        isLoading: false,
-                    });
+                this.setState({
+                    response: transformer(response || null),
+                    isLoading: false,
                 });
+            }).catch(error => {
+                onReject(error);
+
+                this.setState({
+                    error: (error || null),
+                    isLoading: false,
+                });
+            });
         }
 
         _isPending() {
