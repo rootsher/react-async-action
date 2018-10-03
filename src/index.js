@@ -96,7 +96,7 @@ export const createInstance = (defaultProps = {}) => {
 
         _handleAction() {
             const { action, transformer, onResolve, onReject, delay, ...rest } = this.props;
-            let request = Promise.resolve(action(rest));
+            let request = Promise.resolve();
 
             this.setState({
                 isLoading: true,
@@ -105,24 +105,26 @@ export const createInstance = (defaultProps = {}) => {
             });
 
             if (delay) {
-                request = timeout(delay).then(request);
+                request = timeout(delay);
             }
 
-            request.then(response => {
-                onResolve(response);
+            request
+                .then(() => action(rest))
+                .then(response => {
+                    onResolve(response);
 
-                this.setState({
-                    response: transformer(response || null),
-                    isLoading: false,
-                });
-            }).catch(error => {
-                onReject(error);
+                    this.setState({
+                        response: transformer(response || null),
+                        isLoading: false,
+                    });
+                }).catch(error => {
+                    onReject(error);
 
-                this.setState({
-                    error: (error || null),
-                    isLoading: false,
+                    this.setState({
+                        error: (error || null),
+                        isLoading: false,
+                    });
                 });
-            });
         }
 
         _isPending() {
