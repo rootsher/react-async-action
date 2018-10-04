@@ -37,10 +37,8 @@ export const createInstance = (defaultProps = {}) => {
 
         static defaultProps = {
             transformer: response => response,
-            onResolve: response => {
-            },
-            onReject: error => {
-            },
+            onResolve: response => {},
+            onReject: error => {},
             onDemand: false,
             ...defaultProps,
         };
@@ -106,7 +104,7 @@ export const createInstance = (defaultProps = {}) => {
 
             this._cancelled = false;
 
-            clearInterval(this._timeoutIdentifier);
+            clearTimeout(this._timeoutIdentifier);
 
             this.setState({
                 isLoading: true,
