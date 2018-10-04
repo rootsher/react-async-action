@@ -138,6 +138,29 @@ export default () => (
 );
 ```
 
+### cancel-request example
+
+```js
+import Async from 'react-async-action';
+
+export default () => (
+    <Async action={() => fetch('api/product/list')} delay={3000}>
+        {({ cancel, reload }) => (
+            <Fragment>
+                <button onClick={reload}>reload</button>
+                <button onClick={cancel}>cancel</button>
+                <Async.Loading>
+                    <div>Loading...</div>
+                </Async.Loading>
+                <Async.Resolved>
+                    {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
+                </Async.Resolved>
+            </Fragment>
+        )}
+    </Async>
+);
+```
+
 ## API - `<Async>`
 
 ### component - available properties (props):
@@ -155,6 +178,7 @@ export default () => (
 * `isLoading` - contains status of the asynchronous action (boolean)
 * `response` - contains the response of the asynchronous action
 * `error` - contains an error that occurred in an asynchronous action
+* `cancel` - function allowing to cancel a pending action
 * `run` - function which allows firing action on demand (onDemand flag is required)
 * `reload` - a function that allows calling the action again
 
