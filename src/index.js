@@ -4,10 +4,6 @@ import PropTypes from 'prop-types';
 export const createInstance = (defaultProps = {}) => {
     const { Consumer, Provider } = React.createContext();
 
-    function timeout(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     function isFunction(children) {
         return (typeof children === 'function');
     }
@@ -41,8 +37,10 @@ export const createInstance = (defaultProps = {}) => {
 
         static defaultProps = {
             transformer: response => response,
-            onResolve: response => {},
-            onReject: error => {},
+            onResolve: response => {
+            },
+            onReject: error => {
+            },
             onDemand: false,
             ...defaultProps,
         };
@@ -62,6 +60,9 @@ export const createInstance = (defaultProps = {}) => {
         static Rejected = consumerFactory(state => (
             !state.isLoading && !state.response && state.error
         ));
+
+        _cancelled = false;
+        _timeoutIdentifier = null;
 
         state = {
             isLoading: false,
@@ -87,6 +88,7 @@ export const createInstance = (defaultProps = {}) => {
                     {renderChildren(children, {
                         ...this.state,
                         isPending: this._isPending(),
+                        cancel: () => this._cancel(),
                         run: () => onDemand && this._handleAction(),
                         reload: () => this._handleAction(),
                     })}
@@ -98,6 +100,14 @@ export const createInstance = (defaultProps = {}) => {
             const { action, transformer, onResolve, onReject, delay, ...rest } = this.props;
             let request = Promise.resolve();
 
+            if (this.state.isLoading) {
+                return;
+            }
+
+            this._cancelled = false;
+
+            clearInterval(this._timeoutIdentifier);
+
             this.setState({
                 isLoading: true,
                 response: null,
@@ -105,26 +115,51 @@ export const createInstance = (defaultProps = {}) => {
             });
 
             if (delay) {
-                request = timeout(delay);
+                request = this._timeout(delay);
             }
 
             request
-                .then(() => action(rest))
-                .then(response => {
+                .then(this._cancelResolver(() => action(rest)))
+                .then(this._cancelResolver(response => {
                     onResolve(response);
 
                     this.setState({
                         response: transformer(response || null),
                         isLoading: false,
                     });
-                }).catch(error => {
+                }))
+                .catch(this._cancelResolver(error => {
                     onReject(error);
 
                     this.setState({
                         error: (error || null),
                         isLoading: false,
                     });
-                });
+                }));
+        }
+
+        _cancel() {
+            if (!this.state.isLoading) {
+                console.warn('Nothing to cancel...');
+
+                return;
+            }
+
+            this._cancelled = true;
+
+            this.setState({
+                isLoading: false,
+            });
+        }
+
+        _timeout(ms) {
+            return new Promise(resolve => {
+                this._timeoutIdentifier = setTimeout(this._cancelResolver(resolve), ms);
+            });
+        }
+
+        _cancelResolver(fn) {
+            return (data) => (this._cancelled || fn(data));
         }
 
         _isPending() {
