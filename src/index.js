@@ -142,7 +142,7 @@ export const createInstance = (defaultProps = {}) => {
         }
 
         _cancel() {
-            if (this.state.loadingStatus === Async.LOADING_STATUS.LOADING) {
+            if (this.state.loadingStatus !== Async.LOADING_STATUS.LOADING) {
                 console.warn('Nothing to cancel...');
 
                 return;

@@ -1,6 +1,6 @@
 {
   "name": "react-async-action",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Solution for better handling of asynchronous calls in react components",
   "scripts": {
     "build": "babel src --out-dir lib",
