@@ -11,7 +11,7 @@ export default () => (
                     <div>Loading...</div>
                 </Async.Loading>
                 <Async.Resolved>
-                    {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
+                    {({ response }) => <pre>{JSON.stringify(response, null, '\t')}</pre>}
                 </Async.Resolved>
             </Fragment>
         )}

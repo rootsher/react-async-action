@@ -45,10 +45,10 @@ export default () => (
             <div>Loading...</div>
         </Async.Loading>
         <Async.Resolved>
-            {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
+            {({ response }) => <pre>{JSON.stringify(response, null, '\t')}</pre>}
         </Async.Resolved>
         <Async.Rejected>
-            {error => <pre>{JSON.stringify(error, null, '\t')}</pre>}
+            {({ error }) => <pre>{JSON.stringify(error, null, '\t')}</pre>}
         </Async.Rejected>
     </Async>
 );
@@ -104,10 +104,10 @@ const fetchProductDetails = ({ token }) => fetch('api/product/1/details', { toke
 export default () => (
     <Async action={fetchProductToken}>
         <Async.Resolved>
-            {token => (
+            {({ response: token }) => (
                 <Async action={fetchProductDetails} token={token}>
                     <Async.Resolved>
-                        {response => (
+                        {({ response }) => (
                             <pre>{JSON.stringify(response, null, '\t')}</pre>
                         )}
                     </Async.Resolved>
@@ -132,7 +132,7 @@ export default () => (
         })}
     >
         <Async.Resolved>
-            {response => <pre>{response.someKey}</pre>}
+            {({ response }) => <pre>{response.someKey}</pre>}
         </Async.Resolved>
     </Async>
 );
@@ -153,7 +153,7 @@ export default () => (
                     <div>Loading...</div>
                 </Async.Loading>
                 <Async.Resolved>
-                    {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
+                    {({ response }) => <pre>{JSON.stringify(response, null, '\t')}</pre>}
                 </Async.Resolved>
             </Fragment>
         )}

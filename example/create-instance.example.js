@@ -9,7 +9,7 @@ export default () => (
     <ProductList>
         {({ response }) => (
             <React.Fragment>
-                {response && <pre>{JSON.stringify(response, null, '\t')}</pre>}
+                {({ response }) && <pre>{JSON.stringify(response, null, '\t')}</pre>}
             </React.Fragment>
         )}
     </ProductList>

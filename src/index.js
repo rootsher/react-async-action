@@ -43,29 +43,36 @@ export const createInstance = (defaultProps = {}) => {
             ...defaultProps,
         };
 
-        static Pending = consumerFactory(state => (
-            !state.error && !state.response && !state.isLoading
-        ));
+        static LOADING_STATUS = {
+            PENDING: 'pending',
+            LOADING: 'loading',
+            LOADED: 'loaded',
+            CANCELLED: 'cancelled',
+        };
 
-        static Loading = consumerFactory(state => (
-            !state.error && !state.response && state.isLoading
-        ));
+        static Pending = consumerFactory(state => (state.loadingStatus === Async.LOADING_STATUS.PENDING));
+        static Loading = consumerFactory(state => (state.loadingStatus === Async.LOADING_STATUS.LOADING));
 
         static Resolved = consumerFactory(state => (
-            !state.isLoading && !state.error && state.response
+            (state.loadingStatus === Async.LOADING_STATUS.LOADED)
+            && !state.error
+            && (state.response !== undefined)
+            && { response: state.response }
         ));
 
         static Rejected = consumerFactory(state => (
-            !state.isLoading && !state.response && state.error
+            (state.loadingStatus === Async.LOADING_STATUS.LOADED)
+            && !state.response
+            && (state.error !== undefined)
+            && { error: state.error }
         ));
 
-        _cancelled = false;
         _timeoutIdentifier = null;
 
         state = {
-            isLoading: false,
-            response: null,
-            error: null,
+            loadingStatus: Async.LOADING_STATUS.PENDING,
+            response: undefined,
+            error: undefined,
         };
 
         componentDidMount() {
@@ -85,7 +92,7 @@ export const createInstance = (defaultProps = {}) => {
                 <Provider value={this.state}>
                     {renderChildren(children, {
                         ...this.state,
-                        isPending: this._isPending(),
+                        isPending: (this.state.loadingStatus === Async.LOADING_STATUS.PENDING),
                         cancel: () => this._cancel(),
                         run: () => onDemand && this._handleAction(),
                         reload: () => this._handleAction(),
@@ -98,18 +105,16 @@ export const createInstance = (defaultProps = {}) => {
             const { action, transformer, onResolve, onReject, delay, ...rest } = this.props;
             let request = Promise.resolve();
 
-            if (this.state.isLoading) {
+            if (this.state.loadingStatus === Async.LOADING_STATUS.LOADING) {
                 return;
             }
-
-            this._cancelled = false;
 
             clearTimeout(this._timeoutIdentifier);
 
             this.setState({
-                isLoading: true,
-                response: null,
-                error: null,
+                loadingStatus: Async.LOADING_STATUS.LOADING,
+                response: undefined,
+                error: undefined,
             });
 
             if (delay) {
@@ -123,7 +128,7 @@ export const createInstance = (defaultProps = {}) => {
 
                     this.setState({
                         response: transformer(response || null),
-                        isLoading: false,
+                        loadingStatus: Async.LOADING_STATUS.LOADED,
                     });
                 }))
                 .catch(this._cancelResolver(error => {
@@ -131,22 +136,20 @@ export const createInstance = (defaultProps = {}) => {
 
                     this.setState({
                         error: (error || null),
-                        isLoading: false,
+                        loadingStatus: Async.LOADING_STATUS.LOADED,
                     });
                 }));
         }
 
         _cancel() {
-            if (!this.state.isLoading) {
+            if (this.state.loadingStatus === Async.LOADING_STATUS.LOADING) {
                 console.warn('Nothing to cancel...');
 
                 return;
             }
 
-            this._cancelled = true;
-
             this.setState({
-                isLoading: false,
+                loadingStatus: Async.LOADING_STATUS.CANCELLED,
             });
         }
 
@@ -157,13 +160,7 @@ export const createInstance = (defaultProps = {}) => {
         }
 
         _cancelResolver(fn) {
-            return (data) => (this._cancelled || fn(data));
-        }
-
-        _isPending() {
-            const { isLoading, response, error } = this.state;
-
-            return (!isLoading && !response && !error);
+            return (data) => ((this.state.loadingStatus === Async.LOADING_STATUS.CANCELLED) || fn(data));
         }
     }
 

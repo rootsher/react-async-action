@@ -7,10 +7,10 @@ export default () => (
         onResolve={response => console.log('do something...')}
     >
         <Async.Resolved>
-            {response => <pre>{JSON.stringify(response, null, '\t')}</pre>}
+            {({ response }) => <pre>{JSON.stringify(response, null, '\t')}</pre>}
         </Async.Resolved>
         <Async.Rejected>
-            {error => <pre>{JSON.stringify(error, null, '\t')}</pre>}
+            {({ error }) => <pre>{JSON.stringify(error, null, '\t')}</pre>}
         </Async.Rejected>
     </Async>
 );

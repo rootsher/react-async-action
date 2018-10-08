@@ -10,7 +10,7 @@ export default () => (
         })}
     >
         <Async.Resolved>
-            {response => <pre>{response.someKey}</pre>}
+            {({ response }) => <pre>{response.someKey}</pre>}
         </Async.Resolved>
     </Async>
 );
