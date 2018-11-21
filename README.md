@@ -171,6 +171,7 @@ export default () => (
 * `onReject` - a function that fires when the promise is rejected
 * `delay` (ms) - delay in the execution of action
 * `onDemand` (boolean) - a flag which allows to run the action on demand
+* `params` (object) - parameters to compare when updating
 
 ### render component - available properties (props):
 

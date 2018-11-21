@@ -1,6 +1,6 @@
 {
   "name": "react-async-action",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "Solution for better handling of asynchronous calls in react components",
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/rootsher/react-async-action#readme",
   "dependencies": {
+    "lodash": "^4.17.11",
     "prop-types": "^15.6.2",
     "react": "^16.5.2"
   },

@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 export const createInstance = (defaultProps = {}) => {
     const { Consumer, Provider } = React.createContext();
@@ -20,7 +21,7 @@ export const createInstance = (defaultProps = {}) => {
         );
     }
 
-    class Async extends Component {
+    class Async extends PureComponent {
         static propTypes = {
             children: PropTypes.oneOfType([
                 PropTypes.arrayOf(PropTypes.node),
@@ -33,6 +34,7 @@ export const createInstance = (defaultProps = {}) => {
             onReject: PropTypes.func,
             delay: PropTypes.number,
             onDemand: PropTypes.bool,
+            params: PropTypes.object,
         };
 
         static defaultProps = {
@@ -40,6 +42,7 @@ export const createInstance = (defaultProps = {}) => {
             onResolve: response => {},
             onReject: error => {},
             onDemand: false,
+            params: {},
             ...defaultProps,
         };
 
@@ -67,9 +70,17 @@ export const createInstance = (defaultProps = {}) => {
             && { error: state.error }
         ));
 
+        static getDerivedStateFromProps(props, state) {
+            return {
+                ...state,
+                params: props.params,
+            };
+        }
+
         _timeoutIdentifier = null;
 
         state = {
+            params: {},
             loadingStatus: Async.LOADING_STATUS.PENDING,
             response: undefined,
             error: undefined,
@@ -85,6 +96,12 @@ export const createInstance = (defaultProps = {}) => {
             }
         }
 
+        componentDidUpdate(prevProps) {
+            if (!_.isEqual(prevProps.params, this.props.params)) {
+                this._handleAction();
+            }
+        }
+
         render() {
             const { children, onDemand } = this.props;
 
@@ -93,6 +110,7 @@ export const createInstance = (defaultProps = {}) => {
                     {renderChildren(children, {
                         ...this.state,
                         isPending: (this.state.loadingStatus === Async.LOADING_STATUS.PENDING),
+                        isLoading: (this.state.loadingStatus === Async.LOADING_STATUS.LOADING),
                         cancel: () => this._cancel(),
                         run: () => onDemand && this._handleAction(),
                         reload: () => this._handleAction(),
